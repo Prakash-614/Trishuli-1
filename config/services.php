@@ -45,8 +45,14 @@ return [
     'gemini' => [
         'key' => env('GEMINI_API_KEY'),
     ],
-    
-        'openai' => [
+
+    'openai' => [
         'key' => env('OPENAI_API_KEY'),
+    ],
+    'google_alerts' => [
+        'feeds' => env('GOOGLE_ALERTS_FEEDS'),
+    ],
+    'alert' => [
+        'email' => env('ALERT_EMAIL'),
     ],
 ];

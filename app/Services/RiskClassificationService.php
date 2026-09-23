@@ -45,7 +45,8 @@ Respond ONLY with valid JSON, no markdown formatting, no other text:
 {"tier": "GREEN|YELLOW|RED", "modifier": "HIGH|WATCH|HIGH WATCH|null", "reason": "one to two sentences in the style of a Risk Interpretation", "summary": "1-2 sentence factual summary of the mention"}
 PROMPT;
 
-        $userContent = "Title: {$mention->title}\nSnippet: {$mention->snippet}\nSource: {$mention->source}\nReach: {$mention->reach}\nSentiment (auto-detected): {$mention->sentiment}\nPosted: {$mention->mentioned_at}";
+        $reachText = $mention->reach !== null ? $mention->reach : 'unknown (not available for this source)';
+        $userContent = "Title: {$mention->title}\nSnippet: {$mention->snippet}\nSource: {$mention->source}\nReach: {$reachText}\nSentiment (auto-detected): {$mention->sentiment}\nPosted: {$mention->mentioned_at}";
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,
