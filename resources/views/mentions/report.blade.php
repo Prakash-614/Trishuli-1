@@ -1,21 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.app')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Awario Mentions Report</title>
-    <!-- Modern Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
-        rel="stylesheet">
+@section('title', 'All Mentions')
+@section('header_title', 'All Mentions & Social Stream')
+
+@push('styles')
     <style>
-        /* ==========================================================================
-           Awario Mentions Report - High Density (Minimized Gaps) CSS
-           ========================================================================== */
         :root {
-            --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system,
+                BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
             --bg-page: #f8fafc;
             --surface: #ffffff;
@@ -53,24 +45,14 @@
             --radius-lg: 8px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
+        .mentions-page {
             font-family: var(--font-sans);
-            background-color: var(--bg-page);
             color: var(--text-body);
-            padding: 12px 16px 28px;
             font-size: 12px;
             line-height: 1.35;
-            -webkit-font-smoothing: antialiased;
         }
 
-        /* Page Heading */
-        h2 {
+        .mentions-page h4 {
             font-size: 16px;
             font-weight: 700;
             color: var(--text-main);
@@ -80,7 +62,7 @@
             gap: 8px;
         }
 
-        h2::before {
+        .mentions-page h4::before {
             content: "";
             display: inline-block;
             width: 5px;
@@ -89,7 +71,7 @@
             border-radius: 3px;
         }
 
-        /* Filter Toolbar */
+        /* Filters */
         .filters {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -103,7 +85,7 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
-        .filters .filter-group {
+        .filter-group {
             display: flex;
             align-items: center;
             gap: 5px;
@@ -175,7 +157,7 @@
             color: var(--text-main);
         }
 
-        /* Results Counter */
+        /* Results Count */
         .results-count {
             margin: 4px 0 6px 2px;
             color: var(--text-muted);
@@ -195,8 +177,8 @@
             background: var(--primary);
         }
 
-        /* Table Structure */
-        table {
+        /* Table */
+        .mentions-table {
             border-collapse: separate;
             border-spacing: 0;
             width: 100%;
@@ -208,8 +190,8 @@
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
         }
 
-        th,
-        td {
+        .mentions-table th,
+        .mentions-table td {
             border-bottom: 1px solid var(--border);
             border-right: 1px solid var(--border-subtle);
             padding: 6px 9px;
@@ -219,28 +201,25 @@
             line-height: 1.35;
         }
 
-        th:last-child,
-        td:last-child {
+        .mentions-table th:last-child,
+        .mentions-table td:last-child {
             border-right: none;
         }
 
-        tr:last-child td {
+        .mentions-table tr:last-child td {
             border-bottom: none;
         }
 
-        th {
+        .mentions-table th {
             background: #f8fafc;
             color: var(--text-muted);
             font-weight: 700;
             font-size: 10.5px;
             text-transform: uppercase;
             letter-spacing: 0.04em;
-            position: sticky;
-            top: 0;
-            z-index: 10;
         }
 
-        /* Column Width Distribution */
+        /* Columns */
         .col-id {
             width: 5%;
             font-family: monospace;
@@ -279,7 +258,7 @@
             text-align: center;
         }
 
-        /* Row Tier Styles */
+        /* Risk Tier Rows */
         tr.tier-GREEN {
             background-color: var(--tier-green-bg);
         }
@@ -316,8 +295,7 @@
             background-color: #fee2e2;
         }
 
-        /* Two-Line Clamping for High Screen Density */
-        /* --- Text Clamping --- */
+        /* Text Clamp */
         .clamp {
             display: -webkit-box;
             -webkit-line-clamp: 3;
@@ -348,7 +326,7 @@
             text-decoration: underline;
         }
 
-        /* Compact Metadata & Badges */
+        /* Metadata */
         .meta-line {
             margin-bottom: 2px;
             font-size: 11.5px;
@@ -370,7 +348,7 @@
 
         .source-badge {
             display: inline-block;
-            padding: 0px 5px;
+            padding: 0 5px;
             border-radius: var(--radius-sm);
             background: #ffffff;
             border: 1px solid var(--border);
@@ -386,6 +364,7 @@
             font-size: 11px;
         }
 
+        /* Risk Badge */
         .col-risk strong {
             display: inline-block;
             padding: 1px 7px;
@@ -414,9 +393,10 @@
             border: 1px solid #fecdd3;
         }
 
+        /* Sentiment */
         .sentiment-pill {
             display: inline-block;
-            padding: 0px 5px;
+            padding: 0 5px;
             border-radius: 8px;
             font-size: 9.5px;
             font-weight: 600;
@@ -438,7 +418,7 @@
             color: #475569;
         }
 
-        /* Action Link Button */
+        /* Link */
         .col-link a {
             display: inline-flex;
             align-items: center;
@@ -460,202 +440,264 @@
             color: #ffffff;
         }
 
-        /* Laravel Pagination Links */
-        .pagination {
-            margin: 8px 0 0;
-            display: flex;
-            justify-content: flex-end;
+        /* Clean Pagination Wrapper */
+        .pagination-wrapper {
+            margin-top: 14px;
+            padding-top: 8px;
         }
 
-        .pagination nav {
+        .pagination-wrapper nav {
             display: flex;
             align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .pagination-wrapper .pagination {
+            margin: 0;
+            display: flex;
             gap: 2px;
         }
 
-        .pagination svg {
-            width: 14px;
-            height: 14px;
+        .pagination-wrapper svg {
+            width: 13px !important;
+            height: 13px !important;
+            vertical-align: middle;
         }
 
-        .pagination a,
-        .pagination span[aria-current="page"] span,
-        .pagination span.relative {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 28px;
-            height: 28px;
-            padding: 0 8px;
-            border-radius: var(--radius-sm);
-            font-size: 12px;
+        .pagination-wrapper .page-link {
+            font-family: monospace;
+            font-size: 11.5px;
+            padding: 3px 9px;
+            border-radius: 4px;
+            color: #334155;
+            border: 1px solid #cbd5e1;
             text-decoration: none;
-            border: 1px solid var(--border);
-            background: #fff;
-            color: var(--text-body);
         }
 
-        .pagination a:hover {
-            background: var(--surface-hover);
-            border-color: #cbd5e1;
-        }
-
-        .pagination span[aria-current="page"] span {
-            background: var(--primary) !important;
-            color: #fff !important;
-            border-color: var(--primary) !important;
+        .pagination-wrapper .page-item.active .page-link {
+            background-color: #2563eb;
+            border-color: #2563eb;
+            color: #ffffff;
             font-weight: 700;
         }
+
+        .pagination-wrapper p {
+            font-size: 11.5px;
+            color: #64748b;
+            margin: 0;
+        }
     </style>
-</head>
+@endpush
 
-<body>
-    <h2>Awario Mentions Report</h2>
 
-    <form method="GET" action="{{ route('mentions.report') }}" class="filters">
-        <div class="filter-group">
-            <label for="filter-date-from">From:</label>
-            <input type="date" id="filter-date-from" name="date_from" value="{{ request('date_from') }}">
+@section('content')
+
+    <div class="mentions-page">
+
+        <h4 class="mb-2">Awario Mentions Report</h4>
+
+        <form method="GET" action="{{ route('mentions.report') }}" class="filters">
+
+            <div class="filter-group">
+                <label for="filter-date-from">From:</label>
+                <input type="date" id="filter-date-from" name="date_from" value="{{ request('date_from') }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-date-to">To:</label>
+                <input type="date" id="filter-date-to" name="date_to" value="{{ request('date_to') }}">
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-tier">Tier:</label>
+
+                <select id="filter-tier" name="risk_tier">
+                    <option value="">All Tiers</option>
+
+                    @foreach ($tiers as $tier)
+                        <option value="{{ $tier }}" {{ request('risk_tier') == $tier ? 'selected' : '' }}>
+                            {{ $tier }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-source">Source:</label>
+
+                <select id="filter-source" name="source">
+                    <option value="">All Sources</option>
+
+                    @foreach ($sources as $source)
+                        <option value="{{ $source }}" {{ request('source') == $source ? 'selected' : '' }}>
+                            {{ $source }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Reach:</label>
+
+                <select name="min_reach">
+                    <option value="">All</option>
+                    <option value="1" {{ request('min_reach') == '1' ? 'selected' : '' }}>&gt; 0 (Has Reach)</option>
+                    <option value="100" {{ request('min_reach') == '100' ? 'selected' : '' }}>100+</option>
+                    <option value="500" {{ request('min_reach') == '500' ? 'selected' : '' }}>500+</option>
+                    <option value="1000" {{ request('min_reach') == '1000' ? 'selected' : '' }}>1,000+</option>
+                    <option value="5000" {{ request('min_reach') == '5000' ? 'selected' : '' }}>5,000+</option>
+                    <option value="10000" {{ request('min_reach') == '10000' ? 'selected' : '' }}>10,000+</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="filter-per-page">Per Page:</label>
+
+                <select id="filter-per-page" name="per_page">
+                    <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
+                    <option value="25" {{ request('per_page', 25) == 25 ? 'selected' : '' }}>25</option>
+                    <option value="50" {{ request('per_page', 50) == 50 ? 'selected' : '' }}>50</option>
+                    <option value="100" {{ request('per_page', 100) == 100 ? 'selected' : '' }}>100</option>
+                </select>
+            </div>
+
+            <button type="submit">Filter</button>
+            <a href="{{ route('mentions.report') }}">Reset</a>
+
+        </form>
+
+
+        <div class="results-count">
+            Showing
+            {{ $mentions->firstItem() ?? 0 }}–{{ $mentions->lastItem() ?? 0 }}
+            of
+            {{ $mentions->total() }}
+            mentions
         </div>
 
-        <div class="filter-group">
-            <label for="filter-date-to">To:</label>
-            <input type="date" id="filter-date-to" name="date_to" value="{{ request('date_to') }}">
-        </div>
 
-        <div class="filter-group">
-            <label for="filter-tier">Tier:</label>
-            <select id="filter-tier" name="risk_tier">
-                <option value="">All Tiers</option>
-                @foreach ($tiers as $tier)
-                    <option value="{{ $tier }}" {{ request('risk_tier') == $tier ? 'selected' : '' }}>
-                        {{ $tier }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
+        <table class="mentions-table">
 
-        <div class="filter-group">
-            <label for="filter-source">Source:</label>
-            <select id="filter-source" name="source">
-                <option value="">All Sources</option>
-                @foreach ($sources as $source)
-                    <option value="{{ $source }}" {{ request('source') == $source ? 'selected' : '' }}>
-                        {{ $source }}
-                    </option>
-                @endforeach
-            </select>
-        </div>
-
-        <label>Reach:
-            <select name="min_reach">
-                <option value="">All</option>
-                <option value="1" {{ request('min_reach') == '1' ? 'selected' : '' }}>&gt; 0 (Has Reach)</option>
-                <option value="100" {{ request('min_reach') == '100' ? 'selected' : '' }}>100+</option>
-                <option value="500" {{ request('min_reach') == '500' ? 'selected' : '' }}>500+</option>
-                <option value="1000" {{ request('min_reach') == '1000' ? 'selected' : '' }}>1,000+</option>
-                <option value="5000" {{ request('min_reach') == '5000' ? 'selected' : '' }}>5,000+</option>
-                <option value="10000" {{ request('min_reach') == '10000' ? 'selected' : '' }}>10,000+</option>
-            </select>
-        </label>
-
-        <div class="filter-group">
-            <label for="filter-per-page">Per Page:</label>
-            <select id="filter-per-page" name="per_page">
-                <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
-                <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>25</option>
-                <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-            </select>
-        </div>
-
-        <button type="submit">Filter</button>
-        <a href="{{ route('mentions.report') }}">Reset</a>
-    </form>
-
-    <div class="results-count">
-        Showing {{ $mentions->firstItem() ?? 0 }}–{{ $mentions->lastItem() ?? 0 }} of {{ $mentions->total() }}
-        mentions
-    </div>
-
-    <table>
-        <thead>
-            <tr>
-                <th class="col-id">ID</th>
-                <th class="col-date">Date</th>
-                <th class="col-title">Title</th>
-                <th class="col-meta">Source / Reach</th>
-                <th class="col-risk">Risk Tier / Reason</th>
-                <th class="col-summary">Summary (incl. Sentiment)</th>
-                <th class="col-link">Link</th>
-            </tr>
-        </thead>
-        <tbody>
-            @forelse ($mentions as $m)
-                @php
-                    $baseTier = explode(' ', $m->risk_tier ?? '')[0] ?? '';
-                @endphp
-                <tr class="tier-{{ $baseTier }}">
-                    <td class="col-id">#{{ $m->id }}</td>
-                    <td class="col-date">{{ $m->mentioned_at?->format('Y-m-d H:i') }}</td>
-
-                    <td class="col-title">
-                        <div class="clamp" onclick="toggleClamp(this)">{{ $m->title }}</div>
-                        <div class="expand-hint" onclick="toggleClamp(this.previousElementSibling)">show more</div>
-                    </td>
-
-                    <td class="col-meta">
-                        <div class="meta-line"><span class="meta-label">Source:</span> <span
-                                class="source-badge">{{ $m->source }}</span></div>
-                        <div class="meta-line"><span class="meta-label">Reach:</span> <span
-                                class="reach-badge">{{ is_numeric($m->reach) ? number_format($m->reach) : $m->reach ?? '—' }}</span>
-                        </div>
-                    </td>
-
-                    <td class="col-risk">
-                        <div class="meta-line"><strong>{{ $m->risk_tier ?? '—' }}</strong></div>
-                        <div class="clamp" onclick="toggleClamp(this)">{{ $m->risk_reason }}</div>
-                        <div class="expand-hint" onclick="toggleClamp(this.previousElementSibling)">show more</div>
-                    </td>
-
-                    <td class="col-summary">
-                        <div class="meta-line"><span class="meta-label">Sentiment:</span>
-                            <span class="sentiment-pill sentiment-{{ strtolower($m->sentiment ?? 'neutral') }}">
-                                {{ $m->sentiment ?? 'N/A' }}
-                            </span>
-                        </div>
-                        <div class="clamp" onclick="toggleClamp(this)">{{ $m->content }}</div>
-                        <div class="expand-hint" onclick="toggleClamp(this.previousElementSibling)">show more</div>
-                    </td>
-
-                    <td class="col-link">
-                        <a href="{{ $m->url }}" target="_blank" rel="noopener noreferrer">
-                            Open
-                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
-                                stroke-linejoin="round" style="margin-left: 2px;">
-                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                                <polyline points="15 3 21 3 21 9"></polyline>
-                                <line x1="10" y1="14" x2="21" y2="3"></line>
-                            </svg>
-                        </a>
-                    </td>
-                </tr>
-            @empty
+            <thead>
                 <tr>
-                    <td colspan="7"
-                        style="text-align: center; padding: 32px 16px; color: var(--text-muted); font-size: 13px;">
-                        No mentions found matching the selected filters.
-                    </td>
+                    <th class="col-id">ID</th>
+                    <th class="col-date">Date</th>
+                    <th class="col-title">Title</th>
+                    <th class="col-meta">Source / Reach</th>
+                    <th class="col-risk">Risk Tier / Reason</th>
+                    <th class="col-summary">Summary (incl. Sentiment)</th>
+                    <th class="col-link">Link</th>
                 </tr>
-            @endforelse
-        </tbody>
-    </table>
+            </thead>
 
-    <div class="pagination">
-        {{ $mentions->appends(request()->query())->links() }}
+            <tbody>
+
+                @forelse($mentions as $m)
+                    @php
+                        $baseTier = explode(' ', $m->risk_tier ?? '')[0] ?? '';
+                    @endphp
+
+                    <tr class="tier-{{ $baseTier }}">
+
+                        <td class="col-id">
+                            #{{ $m->id }}
+                        </td>
+
+                        <td>
+                            <div>{{ $m->mentioned_at?->format('Y-m-d') }}</div>
+                            <div class="text-muted small">{{ $m->mentioned_at?->format('H:i') }}</div>
+                        </td>
+
+                        <td class="col-title">
+                            <div class="clamp" onclick="toggleClamp(this)">
+                                {{ $m->title }}
+                            </div>
+                            <div class="expand-hint" onclick="toggleClamp(this.previousElementSibling)">
+                                show more
+                            </div>
+                        </td>
+
+                        <td class="col-meta">
+                            <div class="meta-line">
+                                <span class="meta-label">Source:</span>
+                                <span class="source-badge">{{ $m->source }}</span>
+                            </div>
+                            <div class="meta-line">
+                                <span class="meta-label">Reach:</span>
+                                <span class="reach-badge">
+                                    {{ is_numeric($m->reach) ? number_format($m->reach) : $m->reach ?? '—' }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <td class="col-risk">
+                            <div class="meta-line">
+                                <strong>{{ $m->risk_tier ?? '—' }}</strong>
+                            </div>
+                            <div class="clamp" onclick="toggleClamp(this)">
+                                {{ $m->risk_reason }}
+                            </div>
+                            <div class="expand-hint" onclick="toggleClamp(this.previousElementSibling)">
+                                show more
+                            </div>
+                        </td>
+
+                        <td class="col-summary">
+                            <div class="meta-line">
+                                <span class="meta-label">Sentiment:</span>
+                                <span class="sentiment-pill sentiment-{{ strtolower($m->sentiment ?? 'neutral') }}">
+                                    {{ $m->sentiment ?? 'N/A' }}
+                                </span>
+                            </div>
+                            <div class="clamp" onclick="toggleClamp(this)">
+                                {{ $m->content }}
+                            </div>
+                            <div class="expand-hint" onclick="toggleClamp(this.previousElementSibling)">
+                                show more
+                            </div>
+                        </td>
+
+                        <td class="col-link">
+                            <a href="{{ $m->url }}" target="_blank" rel="noopener noreferrer">
+                                Open
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+                                    style="margin-left: 2px;">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15 3 21 3 21 9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
+                        </td>
+
+                    </tr>
+
+                @empty
+
+                    <tr>
+                        <td colspan="7"
+                            style="text-align:center; padding:32px 16px; color:var(--text-muted); font-size:13px;">
+                            No mentions found matching the selected filters.
+                        </td>
+                    </tr>
+                @endforelse
+
+            </tbody>
+
+        </table>
+
+        <!-- Clean Single Pagination Wrapper (No double count, small icons) -->
+        <div class="pagination-wrapper">
+            {{ $mentions->appends(request()->query())->links('pagination::bootstrap-5') }}
+        </div>
+
     </div>
 
+@endsection
+
+
+@push('scripts')
     <script>
         function toggleClamp(el) {
             if (!el) return;
@@ -666,7 +708,7 @@
             }
         }
 
-        // Only show "show more" if the content is clamped and overflowing
+        // Show "show more" only when content is actually overflowing
         document.querySelectorAll('.clamp').forEach(function(el) {
             if (el.scrollHeight > (el.clientHeight + 2)) {
                 var hint = el.nextElementSibling;
@@ -676,6 +718,4 @@
             }
         });
     </script>
-</body>
-
-</html>
+@endpush
