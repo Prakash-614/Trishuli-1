@@ -7,6 +7,12 @@ use Illuminate\Support\Facades\Http;
 
 class ManualMentionService
 {
+    protected MentionDeduplicationService $dedup;
+
+    public function __construct(MentionDeduplicationService $dedup)
+    {
+        $this->dedup = $dedup;
+    }
     public function fetchPreview(string $url): array
     {
         try {
@@ -53,7 +59,10 @@ class ManualMentionService
 
     public function exists(string $url): bool
     {
-        return AwarioMention::where('url', $url)->exists();
+        $hash = $this->dedup->hashUrl($url);
+        return AwarioMention::where('clean_url_hash', $hash)
+            ->orWhere('url', $url)
+            ->exists();
     }
 
     public function save(string $url, string $title, string $snippet): AwarioMention
@@ -65,6 +74,8 @@ class ManualMentionService
             'title' => $title,
             'snippet' => $snippet,
             'url' => $url,
+            'clean_url_hash' => $this->dedup->hashUrl($url),
+            'clean_title_hash' => $this->dedup->hashTitle($title),
             'platform' => 'manual',
             'source' => $this->detectSource($url),
             'reach' => null,

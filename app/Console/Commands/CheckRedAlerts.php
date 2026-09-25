@@ -28,6 +28,7 @@ class CheckRedAlerts extends Command
         foreach ($newRed as $mention) {
             Mail::to($recipients)->send(new \App\Mail\RedAlertMail($mention));
             $mention->update(['alert_sent_at' => now()]);
+            sleep(1); // Optional: Sleep for a second to avoid overwhelming the mail server
         }
 
         $this->info("Sent alerts for {$newRed->count()} RED mentions.");

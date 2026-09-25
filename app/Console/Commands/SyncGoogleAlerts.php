@@ -14,7 +14,12 @@ class SyncGoogleAlerts extends Command
     {
         $this->info('Fetching Google Alerts feeds...');
         $count = $service->syncAll();
-        $this->info("Done. Processed {$count} items.");
+        $this->info("Alerts: processed {$count} items.");
+
+        $this->info('Fetching Google News RSS...');
+        $newsCount = $service->syncGoogleNews();
+        $this->info("News: processed {$newsCount} items.");
+
         return self::SUCCESS;
     }
 }
