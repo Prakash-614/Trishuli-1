@@ -14,7 +14,7 @@ class CheckRedAlerts extends Command
 
     public function handle(): int
     {
-        $newRed = AwarioMention::where('risk_tier', 'RED')
+        $newRed = AwarioMention::where('risk_tier', 'LIKE', 'RED%')
             ->whereNull('alert_sent_at')
             ->get();
 
@@ -22,8 +22,11 @@ class CheckRedAlerts extends Command
             return self::SUCCESS;
         }
 
+        // Split comma-separated emails into an array
+        $recipients = array_filter(array_map('trim', explode(',', config('services.alert.email'))));
+
         foreach ($newRed as $mention) {
-            Mail::to(config('services.alert.email'))->send(new \App\Mail\RedAlertMail($mention));
+            Mail::to($recipients)->send(new \App\Mail\RedAlertMail($mention));
             $mention->update(['alert_sent_at' => now()]);
         }
 

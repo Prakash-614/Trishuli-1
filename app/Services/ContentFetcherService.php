@@ -38,7 +38,7 @@ class ContentFetcherService
             }
 
             $mention->update([
-                'content' => $text ?: null,
+                'raw_content' => $text ?: null,
                 'content_fetched_at' => now(),
             ]);
         } catch (\Throwable $e) {

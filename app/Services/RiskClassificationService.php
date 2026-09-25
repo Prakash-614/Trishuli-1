@@ -46,7 +46,8 @@ Respond ONLY with valid JSON, no markdown formatting, no other text:
 PROMPT;
 
         $reachText = $mention->reach !== null ? $mention->reach : 'unknown (not available for this source)';
-        $userContent = "Title: {$mention->title}\nSnippet: {$mention->snippet}\nSource: {$mention->source}\nReach: {$reachText}\nSentiment (auto-detected): {$mention->sentiment}\nPosted: {$mention->mentioned_at}";
+        $articleBody = $mention->raw_content ? "\nFull Article Excerpt: " . \Illuminate\Support\Str::limit($mention->raw_content, 1200) : '';
+        $userContent = "Title: {$mention->title}\nSnippet: {$mention->snippet}{$articleBody}\nSource: {$mention->source}\nReach: {$reachText}\nSentiment (auto-detected): {$mention->sentiment}\nPosted: {$mention->mentioned_at}";
 
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->apiKey,

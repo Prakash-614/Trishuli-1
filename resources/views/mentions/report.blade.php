@@ -552,13 +552,16 @@
             </div>
 
             <div class="filter-group">
-                <label for="filter-per-page">Per Page:</label>
+                <label for="filter-sentiment">Sentiment:</label>
 
-                <select id="filter-per-page" name="per_page">
-                    <option value="15" {{ request('per_page', 15) == 15 ? 'selected' : '' }}>15</option>
-                    <option value="25" {{ request('per_page', 25) == 25 ? 'selected' : '' }}>25</option>
-                    <option value="50" {{ request('per_page', 50) == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('per_page', 100) == 100 ? 'selected' : '' }}>100</option>
+                <select id="filter-sentiment" name="sentiment">
+                    <option value="">All Sentiments</option>
+                    <option value="positive" {{ strtolower(request('sentiment')) == 'positive' ? 'selected' : '' }}>
+                        Positive</option>
+                    <option value="neutral" {{ strtolower(request('sentiment')) == 'neutral' ? 'selected' : '' }}>Neutral
+                    </option>
+                    <option value="negative" {{ strtolower(request('sentiment')) == 'negative' ? 'selected' : '' }}>
+                        Negative</option>
                 </select>
             </div>
 

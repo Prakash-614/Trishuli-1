@@ -14,7 +14,8 @@ class FetchMentionContent extends Command
     public function handle(ContentFetcherService $fetcher): int
     {
         $mentions = AwarioMention::whereNull('content_fetched_at')
-            ->where('source', 'news-blogs')
+            ->whereNotNull('url')
+            ->where('url', '!=', '')
             ->get();
 
         if ($mentions->isEmpty()) {
@@ -26,7 +27,7 @@ class FetchMentionContent extends Command
 
         foreach ($mentions as $mention) {
             $fetcher->fetch($mention);
-            $status = $mention->fresh()->content ? 'OK' : 'empty (page had no extractable text)';
+            $status = $mention->fresh()->raw_content ? 'OK' : 'empty (page had no extractable text)';
             $this->line("→ #{$mention->id}: {$status}");
         }
 
