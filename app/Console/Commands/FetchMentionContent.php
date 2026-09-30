@@ -27,7 +27,14 @@ class FetchMentionContent extends Command
 
         foreach ($mentions as $mention) {
             $fetcher->fetch($mention);
-            $status = $mention->fresh()->raw_content ? 'OK' : 'empty (page had no extractable text)';
+
+            $fresh = $mention->fresh();
+            if (!$fresh) {
+                $this->line("→ #{$mention->id}: dropped (detected real publish date older than 2 days)");
+                continue;
+            }
+
+            $status = $fresh->raw_content ? 'OK' : 'empty (page had no extractable text)';
             $this->line("→ #{$mention->id}: {$status}");
         }
 

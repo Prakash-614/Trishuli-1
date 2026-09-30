@@ -186,6 +186,40 @@
                 padding: 20px 16px;
             }
         }
+
+        .sidebar-logout {
+            padding: 12px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .sidebar-logout button {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            color: #cbd5e1;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background .15s, color .15s;
+        }
+
+        .sidebar-logout button:hover {
+            background: rgba(220, 38, 38, 0.15);
+            color: #fff;
+            border-color: #dc2626;
+        }
+
+        .logout-name {
+            opacity: .8;
+        }
+
+        .logout-action {
+            font-weight: 600;
+        }
     </style>
     @stack('styles')
 </head>
@@ -228,6 +262,15 @@
                 <span class="text-light small" style="font-size: 0.78rem; color: #cbd5e1;">Live Monitoring Active</span>
             </div>
         </div>
+        @auth
+            <form action="{{ route('logout') }}" method="POST" class="sidebar-logout">
+                @csrf
+                <button type="submit">
+                    <span class="logout-name">{{ auth()->user()->name }}</span>
+                    <span class="logout-action">Logout</span>
+                </button>
+            </form>
+        @endauth
     </aside>
 
     <div class="app-main">

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AwarioMention;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\DomCrawler\Crawler;
 
@@ -15,8 +16,8 @@ class ContentFetcherService
         }
 
         try {
-            $response = Http::timeout(10)
-                ->withHeaders(['User-Agent' => 'Mozilla/5.0 (compatible; TamakoshiBot/1.0)'])
+            $response = Http::timeout(12)
+                ->withHeaders(['User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'])
                 ->get($mention->url);
 
             if (!$response->successful()) {
@@ -24,25 +25,86 @@ class ContentFetcherService
                 return;
             }
 
-            $crawler = new Crawler($response->body());
+            $html = $response->body();
+            $crawler = new Crawler($html);
 
-            // Try common article containers first, fall back to all <p> tags
+            // 1. Try common article containers first, fall back to all <p> tags
             $text = '';
             foreach (['article', 'main', 'body'] as $selector) {
                 $node = $crawler->filter($selector);
                 if ($node->count() > 0) {
-                    $text = $node->filter('p')->each(fn ($n) => $n->text());
-                    $text = implode("\n\n", $text);
+                    $pList = $node->filter('p')->each(fn ($n) => $n->text());
+                    $text = implode("\n\n", $pList);
                     if (strlen($text) > 200) break;
                 }
             }
 
-            $mention->update([
-                'raw_content' => $text ?: null,
+            // 2. EXTRACT THE REAL PUBLISH DATE FROM WEBPAGE HTML
+            $realDate = $this->extractPublishDate($html, $mention->url);
+
+            $updateData = [
+                'raw_content'        => $text ?: null,
                 'content_fetched_at' => now(),
-            ]);
+            ];
+
+            // If the webpage contains the real original publish date, correct it!
+            if ($realDate) {
+                $updateData['mentioned_at'] = Carbon::parse($realDate);
+
+                // If real date is older than 2 days, remove from active daily report
+                if (Carbon::parse($realDate)->lt(Carbon::now('Asia/Kathmandu')->subDays(2))) {
+                    $mention->delete(); // Automatically drops old articles like Sep 05!
+                    return;
+                }
+            }
+
+            $mention->update($updateData);
+
         } catch (\Throwable $e) {
             $mention->update(['content_fetched_at' => now()]);
         }
+    }
+
+    /**
+     * Extracts published date from JSON-LD, OpenGraph, HTML tags, or page text.
+     */
+    protected function extractPublishDate(string $html, string $url): ?string
+    {
+        // 1. Check URL path for date (e.g. /2026/09/05/...)
+        if (preg_match('/\/(\d{4})\/(\d{1,2})\/(\d{1,2})(?:[\/\-_]|$)/', $url, $m)) {
+            return "{$m[1]}-{$m[2]}-{$m[3]}";
+        }
+
+        // 2. Check JSON-LD Schema
+        if (preg_match_all('/<script[^>]+type=["\']application\/ld\+json["\'][^>]*>(.*?)<\/script>/is', $html, $ldMatches)) {
+            foreach ($ldMatches[1] as $jsonText) {
+                if (preg_match('/["\']datePublished["\']\s*:\s*["\']([^"\']+)["\']/i', $jsonText, $dateMatch)) {
+                    return $dateMatch[1];
+                }
+            }
+        }
+
+        // 3. Check Meta / OpenGraph tags
+        $metaPatterns = [
+            '/<meta[^>]+property=["\']article:published_time["\'][^>]+content=["\']([^"\']+)["\']/i',
+            '/<meta[^>]+name=["\']publish-date["\'][^>]+content=["\']([^"\']+)["\']/i',
+            '/<meta[^>]+name=["\']date["\'][^>]+content=["\']([^"\']+)["\']/i',
+        ];
+        foreach ($metaPatterns as $pattern) {
+            if (preg_match($pattern, $html, $m)) {
+                return $m[1];
+            }
+        }
+
+        // 4. Check HTML text for dates like "Sep 05, 2026" or "September 05, 2026"
+        if (preg_match('/(?:[A-Za-z]{3,9}\s+\d{1,2},\s*\d{4})/i', $html, $textMatch)) {
+            try {
+                return Carbon::parse($textMatch[0])->toDateTimeString();
+            } catch (\Throwable $e) {
+                // Ignore unparseable text
+            }
+        }
+
+        return null;
     }
 }

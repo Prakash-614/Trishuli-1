@@ -495,7 +495,35 @@
 
     <div class="mentions-page">
 
-        <h4 class="mb-2">Awario Mentions Report</h4>
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3">
+    <h4 class="mb-0">Social & Media Risk Report</h4>
+    <div class="d-flex align-items-center gap-2">
+        <!-- Direct PDF Download -->
+        <a href="{{ route('report.export-pdf', ['date' => request('date_from', now()->toDateString())]) }}" 
+           class="btn btn-sm btn-outline-dark d-flex align-items-center gap-1.5" style="font-size: 12px; font-weight: 600;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span>Download PDF</span>
+        </a>
+
+        
+        <!-- Send Email to Client -->
+        <form method="POST" action="{{ route('report.send-email') }}" onsubmit="return confirm('Send this daily report with PDF attachment to {{ config('services.alert.email') ?: 'configured client email' }}?');" style="margin: 0;">
+            @csrf
+            <input type="hidden" name="date" value="{{ request('date_from', now()->toDateString()) }}">
+            <button type="submit" class="btn btn-sm btn-primary d-flex align-items-center gap-1.5" style="font-size: 12px; font-weight: 600;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                <span>Email Report to Client</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+@if(session('success'))
+    <div class="alert alert-success py-2 px-3 small rounded-3 mb-2">{{ session('success') }}</div>
+@endif
+@if(session('error'))
+    <div class="alert alert-danger py-2 px-3 small rounded-3 mb-2">{{ session('error') }}</div>
+@endif
 
         <form method="GET" action="{{ route('mentions.report') }}" class="filters">
 
@@ -614,7 +642,13 @@
 
                         <td class="col-title">
                             <div class="clamp" onclick="toggleClamp(this)">
-                                {{ $m->title }}
+                                @if(!empty(trim($m->title ?? '')))
+                                    {{ $m->title }}
+                                @elseif(!empty(trim($m->snippet ?? '')))
+                                    <span class="text-dark">{{ Str::limit(strip_tags($m->snippet), 90) }}</span>
+                                @else
+                                    <span class="text-muted fst-italic">Untitled {{ ucfirst($m->source ?? 'post') }}</span>
+                                @endif
                             </div>
                             <div class="expand-hint" onclick="toggleClamp(this.previousElementSibling)">
                                 show more

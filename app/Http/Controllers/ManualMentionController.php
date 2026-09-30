@@ -22,13 +22,14 @@ class ManualMentionController extends Controller
 
         $preview = $service->fetchPreview($request->url);
 
-       return response()->json([
-    'exists' => false,
-    'title' => $preview['title'],
-    'snippet' => $preview['snippet'],
-    'title_may_be_just_a_name' => $preview['title_may_be_just_a_name'],
-    'source' => $service->detectSource($request->url),
-]);
+        return response()->json([
+            'exists' => false,
+            'title' => $preview['title'],
+            'snippet' => $preview['snippet'],
+            'published_at' => $preview['published_at'],
+            'title_may_be_just_a_name' => $preview['title_may_be_just_a_name'],
+            'source' => $service->detectSource($request->url),
+        ]);
     }
 
     public function store(Request $request, ManualMentionService $service)
@@ -37,14 +38,22 @@ class ManualMentionController extends Controller
             'url' => 'required|url',
             'title' => 'required|string',
             'snippet' => 'required|string',
+            'published_at' => 'nullable|string',
         ]);
 
         if ($service->exists($request->url)) {
             return redirect()->route('mentions.add-manual')->with('error', 'This URL is already in the database.');
         }
 
-        $mention = $service->save($request->url, $request->title, $request->snippet);
+        $mention = $service->save(
+            $request->url,
+            $request->title,
+            $request->snippet,
+            $request->input('published_at')
+        );
 
-        return redirect()->route('mentions.add-manual')->with('success', "Saved as mention #{$mention->id}. It will be classified automatically within 15 minutes, or click below to classify now.");
+        $dateFormatted = $mention->mentioned_at ? $mention->mentioned_at->format('M d, Y H:i') : 'today';
+
+        return redirect()->route('mentions.add-manual')->with('success', "Saved as mention #{$mention->id} (Published: {$dateFormatted}). It will be classified automatically within 15 minutes.");
     }
 }

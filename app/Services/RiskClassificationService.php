@@ -32,11 +32,11 @@ Modifiers (append to the base tier, do not use as a 4th tier):
 - " — WATCH" on GREEN or YELLOW: used when there is no new verified escalatory signal today, but the topic requires continued monitoring (e.g. a social-media sweep with no findings, or a company remaining a sensitive exposure without a new allegation).
 
 Decision logic, applied in order:
-1. Does this contain a VERIFIED call to protest/boycott/vandalism, or a mainstream-media exposé naming a monitored company with an allegation of wrongdoing? -> RED
-2. Is there organized action (protest/boycott/mobilisation) but NOT verified or NOT targeting a monitored company? -> stays YELLOW, does not escalate to RED
-3. Is it humanitarian/emotional but passive (families, grief, missing persons, displacement, compensation, DNA/identification backlog) and unresolved? -> YELLOW (add "— HIGH" if scale/stakes are large)
-4. Does it name a monitored company/project but report no new allegation, just presence in an ongoing narrative (e.g. tunnel search continuing)? -> YELLOW, or YELLOW — HIGH WATCH if it is the company's core ongoing exposure
-5. Is it neutral, positive, institutional support, or resolves/improves an earlier concern (e.g. reconnection, aid, positive investment messaging)? -> GREEN
+1. RED: Threats or organisation of protests, strikes, project work stoppages/halts, vandalism, mainstream-media exposés, aggressive social-media mobilisation or coordinated corporate targeting against the project or contractors (POWERCHINA, SINOHYDRO, NWEDC).
+2. YELLOW — HIGH: High humanitarian sensitivity involving missing workers, unresolved tunnel rescues, difficult search operations, or emotional family demonstrations/petitions demanding rescue updates or compensation.
+3. YELLOW: Rising negative comments, emotional family posts, unverified rumours, dissatisfaction, or emerging general accountability concerns without physical halts.
+4. GREEN / WATCH: Low-engagement mentions, general China-linked disaster context without specific allegations.
+5. GREEN: Routine news, factual reporting, infrastructure recovery, international aid, or constructive investment statements.
 6. No new verified activity found in the monitoring window at all (e.g. a social-media sweep with nothing found)? -> GREEN — WATCH
 
 Write the "reason" the way this report writes Risk Interpretation: state what the item IS (humanitarian/operational/institutional/accusatory), whether it establishes corporate wrongdoing, and what it could plausibly escalate into.
@@ -53,7 +53,7 @@ PROMPT;
             'Authorization' => 'Bearer ' . $this->apiKey,
             'Content-Type' => 'application/json',
         ])->timeout(30)->post('https://api.openai.com/v1/chat/completions', [
-            'model' => 'gpt-5.6-luna',
+            'model' => 'gpt-6-luna',
             'messages' => [
                 ['role' => 'system', 'content' => $systemPrompt],
                 ['role' => 'user', 'content' => $userContent],

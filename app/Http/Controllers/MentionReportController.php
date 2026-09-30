@@ -26,6 +26,14 @@ class MentionReportController extends Controller
         if ($request->filled('sentiment')) {
             $query->where('sentiment', 'LIKE', $request->sentiment);
         }
+        if ($request->filled('sentiment')) {
+            $query->where('sentiment', 'LIKE', $request->sentiment);
+        }
+
+        // Apply Reach Filter
+        if ($request->filled('min_reach')) {
+            $query->where('reach', '>=', (int) $request->min_reach);
+        }
 
         $perPage = 25;
         $mentions = $query->orderByDesc('mentioned_at')->paginate($perPage)->withQueryString();

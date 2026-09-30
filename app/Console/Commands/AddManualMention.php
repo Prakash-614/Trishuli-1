@@ -43,9 +43,18 @@ class AddManualMention extends Command
             $snippet = $this->ask('Snippet / what it says');
         }
 
-        $mention = $service->save($url, $title, $snippet);
+        // Auto-detect or ask for publication date
+        if (!empty($preview['published_at'])) {
+            $this->line("Found publication date: {$preview['published_at']}");
+            $publishedAt = $this->ask('Publication date (press Enter to keep, or type YYYY-MM-DD to change)', $preview['published_at']);
+        } else {
+            $publishedAt = $this->ask('Could not auto-detect date. Publication date (YYYY-MM-DD HH:MM, press Enter for now)', now()->toDateTimeString());
+        }
 
-        $this->info("Saved as mention #{$mention->id} (source: {$mention->source}).");
+        $mention = $service->save($url, $title, $snippet, $publishedAt);
+
+        $pubDate = $mention->mentioned_at ? $mention->mentioned_at->format('Y-m-d H:i') : 'now';
+        $this->info("Saved as mention #{$mention->id} (Source: {$mention->source}, Published: {$pubDate}).");
         $this->info('Run `php artisan awario:classify` to classify it.');
 
         return self::SUCCESS;

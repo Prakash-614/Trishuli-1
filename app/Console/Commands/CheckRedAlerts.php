@@ -14,11 +14,20 @@ class CheckRedAlerts extends Command
 
     public function handle(): int
     {
+        // 1. Only pick RED mentions published TODAY (same calendar day) that haven't been emailed yet
         $newRed = AwarioMention::where('risk_tier', 'LIKE', 'RED%')
             ->whereNull('alert_sent_at')
+            ->whereDate('mentioned_at', '>=', now()->toDateString())
             ->get();
 
+        // 2. Mark any older historical RED mentions (published before today) as processed without emailing
+        AwarioMention::where('risk_tier', 'LIKE', 'RED%')
+            ->whereNull('alert_sent_at')
+            ->whereDate('mentioned_at', '<', now()->toDateString())
+            ->update(['alert_sent_at' => now()]);
+
         if ($newRed->isEmpty()) {
+            $this->info('No new RED mentions published today requiring email alert.');
             return self::SUCCESS;
         }
 
@@ -31,7 +40,7 @@ class CheckRedAlerts extends Command
             sleep(1); // Optional: Sleep for a second to avoid overwhelming the mail server
         }
 
-        $this->info("Sent alerts for {$newRed->count()} RED mentions.");
+        $this->info("Sent alerts for {$newRed->count()} RED mentions published today.");
         return self::SUCCESS;
     }
 }
