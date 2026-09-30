@@ -13,6 +13,13 @@ class AwarioMention extends Model
         'raw' => 'array',
         'mentioned_at' => 'datetime',
     ];
+    /**
+     * Automatically convert UTC database timestamps to Nepal Time (Asia/Kathmandu)
+     */
+    public function getMentionedAtAttribute($value)
+    {
+        return $value ? \Carbon\Carbon::parse($value, 'UTC')->setTimezone('Asia/Kathmandu') : null;
+    }
 
     /**
      * Remove 4-byte emojis (like 🌊, 💔, ⚠️) that turn into ▯▯ in DomPDF.

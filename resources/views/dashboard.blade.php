@@ -434,7 +434,7 @@
                                                     {{ $rm->mentioned_at ? \Carbon\Carbon::parse($rm->mentioned_at)->format('Y-m-d') : '—' }}
                                                 </div>
                                                 <div style="font-size: 0.72rem; color: #94a3b8;">
-                                                    {{ $rm->mentioned_at ? \Carbon\Carbon::parse($rm->mentioned_at)->format('H:i') : '' }}
+                                                   {{ $rm->mentioned_at ? \Carbon\Carbon::parse($rm->mentioned_at)->timezone('Asia/Kathmandu')->format('H:i') : '' }}
                                                 </div>
                                             </td>
                                             <td style="padding: 10px 12px;">
