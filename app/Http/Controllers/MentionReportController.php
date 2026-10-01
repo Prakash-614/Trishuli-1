@@ -26,9 +26,6 @@ class MentionReportController extends Controller
         if ($request->filled('sentiment')) {
             $query->where('sentiment', 'LIKE', $request->sentiment);
         }
-        if ($request->filled('sentiment')) {
-            $query->where('sentiment', 'LIKE', $request->sentiment);
-        }
 
         // Apply Reach Filter
         if ($request->filled('min_reach')) {

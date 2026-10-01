@@ -133,11 +133,11 @@ class ManualMentionService
     /**
      * Safely parse raw date string into Carbon datetime string.
      */
-    protected function tryParseDate(?string $dateStr): ?string
+   protected function tryParseDate(?string $dateStr): ?string
     {
         if (!$dateStr) return null;
         try {
-            return Carbon::parse(trim($dateStr))->toDateTimeString();
+            return Carbon::parse(trim($dateStr))->setTimezone('Asia/Kathmandu')->toDateTimeString();
         } catch (\Throwable $e) {
             return null;
         }
@@ -164,7 +164,9 @@ class ManualMentionService
 
     public function save(string $url, string $title, string $snippet, ?string $publishedAt = null): AwarioMention
     {
-        $mentionedAt = $publishedAt ? Carbon::parse($publishedAt) : now();
+        $mentionedAt = $publishedAt 
+            ? Carbon::parse($publishedAt, 'Asia/Kathmandu') 
+            : Carbon::now('Asia/Kathmandu');
 
         return AwarioMention::create([
             'awario_id' => 'manual-' . md5($url . microtime()),

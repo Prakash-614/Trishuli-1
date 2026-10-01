@@ -20,7 +20,7 @@ class ReportExportController extends Controller
         // 1. If date is not provided or has no mentions, pick the latest date with data
         if (!$date || AwarioMention::whereDate('mentioned_at', $date)->count() === 0) {
             $latest = AwarioMention::max('mentioned_at');
-            $date = $latest ? Carbon::parse($latest)->toDateString() : Carbon::today()->toDateString();
+            $date = $latest ? Carbon::parse($latest, 'Asia/Kathmandu')->toDateString() : Carbon::today('Asia/Kathmandu')->toDateString();
         }
 
         // 2. Fetch mentions for this date (limit to top 40 to prevent browser timeout)
@@ -74,7 +74,7 @@ class ReportExportController extends Controller
      */
     public function emailReport(Request $request)
     {
-        $date = $request->input('date') ?: Carbon::today()->toDateString();
+        $date = $request->input('date') ?: Carbon::today('Asia/Kathmandu')->toDateString();
 
         // Priority: Form input -> config/services.php alert email -> env fallback
         $recipient = $request->filled('email')

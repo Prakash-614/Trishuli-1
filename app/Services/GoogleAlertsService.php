@@ -63,7 +63,7 @@ class GoogleAlertsService
             AwarioMention::create([
                 'awario_id' => $galertId,
                 'alert_id' => 0,
-                'mentioned_at' => now(),
+                'mentioned_at' => \Carbon\Carbon::now('Asia/Kathmandu'),
                 'title' => $title,
                 'snippet' => $snippet,
                 'url' => $link,
@@ -157,7 +157,9 @@ class GoogleAlertsService
                 AwarioMention::create([
                     'awario_id'        => $gnewsId,
                     'alert_id'         => 0,
-                    'mentioned_at'     => $pubDate ? \Carbon\Carbon::parse($pubDate) : now(),
+                    'mentioned_at'     => $pubDate 
+                        ? \Carbon\Carbon::parse($pubDate)->setTimezone('Asia/Kathmandu') 
+                        : \Carbon\Carbon::now('Asia/Kathmandu'),
                     'title'            => $title,
                     'snippet'          => $snippet,
                     'url'              => $link,

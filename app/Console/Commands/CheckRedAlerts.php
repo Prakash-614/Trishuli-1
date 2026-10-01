@@ -14,17 +14,19 @@ class CheckRedAlerts extends Command
 
     public function handle(): int
     {
-        // 1. Only pick RED mentions published TODAY (same calendar day) that haven't been emailed yet
+        $todayNpt = \Carbon\Carbon::today('Asia/Kathmandu')->toDateString();
+
+        // 1. Only pick RED mentions published TODAY (Nepal calendar day) that haven't been emailed yet
         $newRed = AwarioMention::where('risk_tier', 'LIKE', 'RED%')
             ->whereNull('alert_sent_at')
-            ->whereDate('mentioned_at', '>=', now()->toDateString())
+            ->whereDate('mentioned_at', '>=', $todayNpt)
             ->get();
 
         // 2. Mark any older historical RED mentions (published before today) as processed without emailing
         AwarioMention::where('risk_tier', 'LIKE', 'RED%')
             ->whereNull('alert_sent_at')
-            ->whereDate('mentioned_at', '<', now()->toDateString())
-            ->update(['alert_sent_at' => now()]);
+            ->whereDate('mentioned_at', '<', $todayNpt)
+            ->update(['alert_sent_at' => \Carbon\Carbon::now('Asia/Kathmandu')]);
 
         if ($newRed->isEmpty()) {
             $this->info('No new RED mentions published today requiring email alert.');

@@ -48,7 +48,7 @@ class AddManualMention extends Command
             $this->line("Found publication date: {$preview['published_at']}");
             $publishedAt = $this->ask('Publication date (press Enter to keep, or type YYYY-MM-DD to change)', $preview['published_at']);
         } else {
-            $publishedAt = $this->ask('Could not auto-detect date. Publication date (YYYY-MM-DD HH:MM, press Enter for now)', now()->toDateTimeString());
+            $publishedAt = $this->ask('Could not auto-detect date. Publication date (YYYY-MM-DD HH:MM, press Enter for now)', \Carbon\Carbon::now('Asia/Kathmandu')->format('Y-m-d H:i'));
         }
 
         $mention = $service->save($url, $title, $snippet, $publishedAt);

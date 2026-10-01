@@ -360,7 +360,7 @@
                                     <span class="tag-tier {{ $itemBase }}"
                                         style="font-size:0.68rem;">{{ $item->risk_tier }}</span>
                                     <span class="text-muted font-mono-num" style="font-size:0.75rem;">
-                                        {{ $item->mentioned_at ? \Carbon\Carbon::parse($item->mentioned_at)->format('M d, H:i') : 'Recent' }}
+                                        {{ $item->mentioned_at ? \Carbon\Carbon::parse($item->mentioned_at)->timezone('Asia/Kathmandu')->format('M d, H:i') : 'Recent' }}
                                     </span>
                                 </div>
                                 <div class="attention-title mb-1">
@@ -431,10 +431,10 @@
                                         <tr class="tier-{{ $rmBase }}">
                                             <td class="font-mono-num text-muted" style="padding: 10px 12px;">
                                                 <div>
-                                                    {{ $rm->mentioned_at ? \Carbon\Carbon::parse($rm->mentioned_at)->format('Y-m-d') : '—' }}
+                                                    {{ $rm->mentioned_at ? \Carbon\Carbon::parse($rm->mentioned_at)->timezone('Asia/Kathmandu')->format('Y-m-d') : '—' }}
                                                 </div>
                                                 <div style="font-size: 0.72rem; color: #94a3b8;">
-                                                   {{ $rm->mentioned_at ? \Carbon\Carbon::parse($rm->mentioned_at)->timezone('Asia/Kathmandu')->format('H:i') : '' }}
+                                                    {{ $rm->mentioned_at ? \Carbon\Carbon::parse($rm->mentioned_at)->timezone('Asia/Kathmandu')->format('H:i') : '' }}
                                                 </div>
                                             </td>
                                             <td style="padding: 10px 12px;">

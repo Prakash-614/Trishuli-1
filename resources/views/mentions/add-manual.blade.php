@@ -283,24 +283,25 @@
                 const dateInput = document.getElementById('published_at');
                 const dateNotice = document.getElementById('dateNotice');
 
+                // Helper to format any Date into Nepal Time (UTC + 05:45 = +345 minutes)
+                function toNepalLocalIso(date) {
+                    const utcMs = date.getTime();
+                    const nepalOffsetMs = (5 * 60 + 45) * 60 * 1000;
+                    return new Date(utcMs + nepalOffsetMs).toISOString().slice(0, 16);
+                }
+
                 if (data.published_at) {
                     const parsedDate = new Date(data.published_at);
                     if (!isNaN(parsedDate.getTime())) {
-                        // Local YYYY-MM-DDTHH:mm string for datetime-local
-                        const tzOffset = parsedDate.getTimezoneOffset() * 60000;
-                        const localISO = new Date(parsedDate.getTime() - tzOffset).toISOString().slice(0, 16);
-                        dateInput.value = localISO;
+                        dateInput.value = toNepalLocalIso(parsedDate);
                         dateNotice.innerHTML =
-                            '✅ <span class="text-success fw-semibold">Auto-detected publish date: ' + data
+                            '✅ <span class="text-success fw-semibold">Auto-detected publish date (Nepal Time): ' + data
                             .published_at + '</span>';
                     }
                 } else {
-                    // Fallback to now
-                    const now = new Date();
-                    const tzOffset = now.getTimezoneOffset() * 60000;
-                    dateInput.value = new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+                    dateInput.value = toNepalLocalIso(new Date());
                     dateNotice.innerHTML =
-                        '<span class="text-muted">⚠️ Could not detect publish date from page headers. Defaulted to current time (feel free to adjust).</span>';
+                        '<span class="text-muted">⚠️ Could not detect publish date from page headers. Defaulted to current Nepal time.</span>';
                 }
 
                 if (data.title) {

@@ -636,7 +636,7 @@
                         </td>
 
                         <td>
-                            <div>{{ $m->mentioned_at?->format('Y-m-d') }}</div>
+                            <div>{{ $m->mentioned_at?->timezone('Asia/Kathmandu')->format('Y-m-d') }}</div>
                             <div class="text-muted small">{{ $m->mentioned_at?->timezone('Asia/Kathmandu')->format('H:i') }}</div>
                         </td>
 

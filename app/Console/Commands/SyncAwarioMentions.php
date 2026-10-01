@@ -12,21 +12,39 @@ class SyncAwarioMentions extends Command
 
     public function handle(AwarioService $awario): int
     {
-        $alertId = $this->argument('alert_id') ?: config('services.awario.alert_id');
+        // 1. If passed via CLI argument (e.g. php artisan awario:sync 12345), use it
+        $rawAlertIds = $this->argument('alert_id') ?: config('services.awario.alert_id');
 
-        if (!$alertId) {
+        if (!$rawAlertIds) {
             $this->error('AWARIO_ALERT_ID is not set in .env and no alert ID was provided.');
             return self::FAILURE;
         }
 
-       $days = (int) $this->option('days');
-        $this->info("Syncing mentions for alert {$alertId} (from past {$days} days)...");
+        // 2. Parse comma-separated IDs into an array
+        $alertIds = array_filter(array_map('trim', explode(',', (string) $rawAlertIds)));
 
-        $count = $awario->syncMentions((int) $alertId, function ($page, $batchCount, $totalSoFar) {
-            $this->line("  → Page {$page}: fetched {$batchCount} mentions (Total so far: {$totalSoFar})");
-        }, $days);
+        $days = (int) $this->option('days');
+        $grandTotal = 0;
 
-        $this->info("Done. Synced {$count} mentions.");
+        foreach ($alertIds as $alertId) {
+            $alertIdInt = (int) $alertId;
+            $this->info("\n=======================================================");
+            $this->info("Syncing mentions for Alert ID [{$alertIdInt}] (past {$days} days)...");
+            $this->info("=======================================================");
+
+            try {
+                $count = $awario->syncMentions($alertIdInt, function ($page, $batchCount, $totalSoFar) {
+                    $this->line("  → Page {$page}: fetched {$batchCount} mentions (Total for this alert: {$totalSoFar})");
+                }, $days);
+
+                $this->info("✔ Finished Alert [{$alertIdInt}]: synced {$count} mentions.");
+                $grandTotal += $count;
+            } catch (\Throwable $e) {
+                $this->error("✖ Error syncing alert [{$alertIdInt}]: " . $e->getMessage());
+            }
+        }
+
+        $this->info("\nAll alerts completed! Total mentions synced across all alerts: {$grandTotal}");
 
         return self::SUCCESS;
     }

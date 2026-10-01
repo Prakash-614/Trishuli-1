@@ -14,11 +14,15 @@ class AwarioMention extends Model
         'mentioned_at' => 'datetime',
     ];
     /**
-     * Automatically convert UTC database timestamps to Nepal Time (Asia/Kathmandu)
+     * Automatically cast mentioned_at in Nepal Time (Asia/Kathmandu)
      */
     public function getMentionedAtAttribute($value)
     {
-        return $value ? \Carbon\Carbon::parse($value, 'UTC')->setTimezone('Asia/Kathmandu') : null;
+        if (!$value) {
+            return null;
+        }
+
+        return \Carbon\Carbon::parse($value, 'Asia/Kathmandu');
     }
 
     /**

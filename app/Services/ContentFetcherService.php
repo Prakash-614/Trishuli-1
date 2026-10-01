@@ -49,10 +49,11 @@ class ContentFetcherService
 
             // If the webpage contains the real original publish date, correct it!
             if ($realDate) {
-                $updateData['mentioned_at'] = Carbon::parse($realDate);
+                $parsedRealDate = Carbon::parse($realDate)->setTimezone('Asia/Kathmandu');
+                $updateData['mentioned_at'] = $parsedRealDate;
 
                 // If real date is older than 2 days, remove from active daily report
-                if (Carbon::parse($realDate)->lt(Carbon::now('Asia/Kathmandu')->subDays(2))) {
+                if ($parsedRealDate->lt(Carbon::now('Asia/Kathmandu')->subDays(2))) {
                     $mention->delete(); // Automatically drops old articles like Sep 05!
                     return;
                 }

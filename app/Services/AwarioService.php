@@ -20,7 +20,7 @@ class AwarioService
 
     public function syncMentions(int $alertId, ?\Closure $onProgress = null, int $days = 2): int
     {
-        $cutoffTime   = Carbon::now()->subDays($days);
+       $cutoffTime   = Carbon::now('Asia/Kathmandu')->subDays($days);
         $dateFromMs   = $cutoffTime->getTimestampMs();
 
         $apiUrl = "{$this->base}/alerts/{$alertId}/mentions";
@@ -75,10 +75,10 @@ class AwarioService
                         ? \Illuminate\Support\Str::limit(strip_tags($snippet), 120)
                         : (isset($mention['author']['name']) ? "Post by {$mention['author']['name']}" : 'Untitled Post'));
 
-                // 1. Calculate the exact publication date/time of the mention
+                // 1. Calculate the exact publication date/time of the mention in Nepal Time
                 $mentionDate = isset($mention['date'])
-                    ? Carbon::createFromTimestampMs($mention['date'])
-                    : now();
+                    ? Carbon::createFromTimestampMs($mention['date'], 'Asia/Kathmandu')
+                    : Carbon::now('Asia/Kathmandu');
 
                 // 2. 48-HOUR CUTOFF: Skip anything published before 48 hours ago
                 if ($mentionDate->lt($cutoffTime)) {

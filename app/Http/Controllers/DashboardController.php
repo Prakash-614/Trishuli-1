@@ -33,7 +33,7 @@ class DashboardController extends Controller
         // 14-day trend aggregation
         $trend = AwarioMention::selectRaw('DATE(mentioned_at) as day, risk_tier, count(*) as total')
             ->whereNotNull('risk_tier')
-            ->where('mentioned_at', '>=', Carbon::now()->subDays(14))
+            ->where('mentioned_at', '>=', Carbon::now('Asia/Kathmandu')->subDays(14))
             ->groupBy('day', 'risk_tier')
             ->orderBy('day')
             ->get()
