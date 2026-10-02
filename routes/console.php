@@ -36,3 +36,9 @@ Schedule::command('report:send-email')
     ->cron('0 12,13,21 * * *')
     ->timezone('Asia/Kathmandu')
     ->withoutOverlapping();
+
+// Background deduplication safety sweep (every 30 minutes)
+Schedule::command('mentions:deduplicate')
+    ->everyThirtyMinutes()
+    ->timezone('Asia/Kathmandu')
+    ->withoutOverlapping();

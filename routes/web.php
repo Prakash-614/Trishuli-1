@@ -23,4 +23,6 @@ Route::middleware('auth')->group(function () {
     // PDF Export and Client Email routes
     Route::get('/report/export-pdf', [\App\Http\Controllers\ReportExportController::class, 'downloadPdf'])->name('report.export-pdf');
     Route::post('/report/send-email', [\App\Http\Controllers\ReportExportController::class, 'emailReport'])->name('report.send-email');
+    
+    
 });

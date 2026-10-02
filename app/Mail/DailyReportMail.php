@@ -19,21 +19,32 @@ class DailyReportMail extends Mailable
     public int $totalMentions;
     public string $highestRisk;
     public string $fileName;
+    public string $slotTime;
+    public string $timeWindowText;
 
-    public function __construct(string $reportDate, string $pdfBinary, int $totalMentions, string $highestRisk, ?string $fileName = null)
-    {
-        $this->reportDate    = $reportDate;
-        $this->pdfBinary     = $pdfBinary;
-        $this->totalMentions = $totalMentions;
-        $this->highestRisk   = $highestRisk;
-        $this->fileName      = $fileName ?: ('Risk_Monitoring_Report_' . str_replace('-', '', $reportDate) . '.pdf');
+    public function __construct(
+        string $reportDate,
+        string $pdfBinary,
+        int $totalMentions,
+        string $highestRisk,
+        ?string $fileName = null,
+        string $slotTime = '12:00 PM',
+        string $timeWindowText = ''
+    ) {
+        $this->reportDate     = $reportDate;
+        $this->pdfBinary      = $pdfBinary;
+        $this->totalMentions  = $totalMentions;
+        $this->highestRisk    = $highestRisk;
+        $this->fileName       = $fileName ?: ('Risk_Monitoring_Report_' . str_replace('-', '', $reportDate) . '.pdf');
+        $this->slotTime       = $slotTime;
+        $this->timeWindowText = $timeWindowText;
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
             from: new \Illuminate\Mail\Mailables\Address('info@gtechvision.com', 'Gtech Vision'),
-            subject: "Daily Risk Monitoring Report — {$this->reportDate}",
+            subject: "Social & Media Risk Report [{$this->slotTime}] — {$this->reportDate}",
         );
     }
 

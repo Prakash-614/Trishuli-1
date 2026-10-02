@@ -52,9 +52,9 @@ class ContentFetcherService
                 $parsedRealDate = Carbon::parse($realDate)->setTimezone('Asia/Kathmandu');
                 $updateData['mentioned_at'] = $parsedRealDate;
 
-                // If real date is older than 2 days, remove from active daily report
+                // If real date is older than 2 days, update the date so queries filter it correctly without deleting historical records
                 if ($parsedRealDate->lt(Carbon::now('Asia/Kathmandu')->subDays(2))) {
-                    $mention->delete(); // Automatically drops old articles like Sep 05!
+                    $mention->update($updateData);
                     return;
                 }
             }
@@ -71,9 +71,13 @@ class ContentFetcherService
      */
     protected function extractPublishDate(string $html, string $url): ?string
     {
-        // 1. Check URL path for date (e.g. /2026/09/05/...)
+        // 1. Check URL path for Full Date (/2026/09/05/...) OR Year/Month (/2026/08/...)
         if (preg_match('/\/(\d{4})\/(\d{1,2})\/(\d{1,2})(?:[\/\-_]|$)/', $url, $m)) {
             return "{$m[1]}-{$m[2]}-{$m[3]}";
+        }
+        // Catches Artha Sarokar style (/2026/08/slug.html -> defaults to 1st of that month)
+        if (preg_match('/\/(\d{4})\/(0[1-9]|1[0-2])\//', $url, $m)) {
+            return "{$m[1]}-{$m[2]}-01";
         }
 
         // 2. Check JSON-LD Schema

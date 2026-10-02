@@ -48,8 +48,7 @@ class GoogleAlertsService
             $guid = (string) $entry->id;
             $galertId = 'galert-' . md5($guid);
 
-            // 1. Check exact Google Alerts GUID
-            if (AwarioMention::where('awario_id', $galertId)->exists()) {
+            if ($this->isGarbageMention($title, $snippet, $link)) {
                 continue;
             }
 
@@ -142,8 +141,7 @@ class GoogleAlertsService
                 $pubDate = (string) $item->pubDate;
                 $gnewsId = 'gnews-' . md5($guid);
 
-                // Check exact GUID
-                if (AwarioMention::where('awario_id', $gnewsId)->exists()) {
+                if ($this->isGarbageMention($title, $snippet, $link)) {
                     continue;
                 }
 
@@ -180,4 +178,42 @@ class GoogleAlertsService
 
     return $totalCount;
 }
+/**
+     * Reject noisy false positives and out-of-scope crawler items.
+     */
+    protected function isGarbageMention(string $title, string $snippet, string $url): bool
+    {
+        $text = mb_strtolower($title . ' ' . $snippet . ' ' . $url);
+
+        // 1. Negative keywords for known collisions
+        $blacklist = [
+            'minicon gauge', 'subaru', 'timex marlin', 'dress watch',
+            'semiconductor export controls', 'csis.org', 'cameroonfreepress',
+            'springfield illinois', 'central time', 'project lebanon',
+            'syria industry today', 'afghanistan: a dilemma'
+        ];
+
+        foreach ($blacklist as $badWord) {
+            if (str_contains($text, $badWord)) {
+                return true;
+            }
+        }
+
+        // 2. If 'ut-1' or 'ut1' is the only matched term, require Nepal/hydropower context
+        if (preg_match('/\b(ut-1|ut1)\b/i', $text)) {
+            $contextKeywords = ['nepal', 'trishuli', 'hydro', 'rasuwa', 'nwedc', 'dam', 'tunnel', 'flood', 'bhotekoshi'];
+            $hasContext = false;
+            foreach ($contextKeywords as $ctx) {
+                if (str_contains($text, $ctx)) {
+                    $hasContext = true;
+                    break;
+                }
+            }
+            if (!$hasContext) {
+                return true; // Reject out-of-context UT-1 matches
+            }
+        }
+
+        return false;
+    }
 }

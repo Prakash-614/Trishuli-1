@@ -27,6 +27,24 @@ class MentionDeduplicationService
         $host = preg_replace('/^www\./i', '', strtolower($parsed['host']));
         $path = isset($parsed['path']) ? rtrim($parsed['path'], '/') : '';
 
+        // Standardize YouTube URLs: ensure video ID 'v' is preserved as the canonical path
+        if (str_contains($host, 'youtube.com') || str_contains($host, 'youtu.be')) {
+            if (isset($parsed['query'])) {
+                parse_str($parsed['query'], $q);
+                if (!empty($q['v'])) {
+                    return 'youtube.com/watch?v=' . $q['v'];
+                }
+            }
+            if ($host === 'youtu.be' && !empty($path)) {
+                return 'youtube.com/watch?v=' . ltrim($path, '/');
+            }
+        }
+
+        // Standardize Instagram URLs (strip extra path trailers or query parameters)
+        if (str_contains($host, 'instagram.com') && preg_match('#/(p|reel)/([A-Za-z0-9_-]+)#', $path, $instaMatch)) {
+            return 'instagram.com/' . $instaMatch[1] . '/' . $instaMatch[2];
+        }
+
         // Strip tracking query parameters
         $cleanQuery = '';
         if (isset($parsed['query'])) {

@@ -85,8 +85,20 @@ class AwarioService
                     continue;
                 }
 
-                // Only check if this exact Awario mention ID already exists (do not merge different posts with matching titles)
+                // 1. Check by Awario ID first
                 $existing = AwarioMention::where('awario_id', (string) $mention['id'])->first();
+
+                // 2. Cross-check for duplicate URL or Title across other platforms/feeds
+                if (!$existing) {
+                    $duplicate = $this->dedup->findDuplicate($mentionUrl, $title);
+                    if ($duplicate) {
+                        $duplicate->increment('duplicate_count');
+                        if (!$duplicate->reach && !empty($mention['reach'])) {
+                            $duplicate->update(['reach' => $mention['reach']]);
+                        }
+                        continue; // Skip inserting this duplicate
+                    }
+                }
 
                 $data = [
                     'alert_id'          => $alertId,

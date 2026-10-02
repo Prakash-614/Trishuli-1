@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>SOCIAL & MEDIA RISK MONITORING REPORT</title>
@@ -7,30 +8,35 @@
         @page {
             margin: 36px 45px 45px 45px;
         }
+
         body {
             font-family: 'DejaVu Sans', 'Times New Roman', serif;
             font-size: 10pt;
             line-height: 1.35;
             color: #000000;
         }
+
         .page-number {
             text-align: center;
             font-size: 9pt;
             margin-bottom: 12px;
             color: #333333;
         }
+
         h2.main-title {
             font-size: 12pt;
             font-weight: bold;
             margin-bottom: 14px;
             letter-spacing: 0.4px;
         }
+
         .header-meta {
             margin-bottom: 14px;
             font-size: 9.5pt;
             line-height: 1.4;
             text-align: justify;
         }
+
         .header-meta strong {
             font-weight: bold;
         }
@@ -40,12 +46,15 @@
             border-collapse: collapse;
             margin-bottom: 18px;
         }
-        table.bordered-table th, table.bordered-table td {
+
+        table.bordered-table th,
+        table.bordered-table td {
             border: 1px solid #000000;
             padding: 5px 8px;
             vertical-align: top;
             font-size: 9.5pt;
         }
+
         table.bordered-table th {
             font-weight: bold;
             background-color: #f8fafc;
@@ -58,20 +67,36 @@
             margin-bottom: 8px;
         }
 
-        .dot-green { color: #16a34a; font-weight: bold; font-size: 11pt; }
-        .dot-yellow { color: #ca8a04; font-weight: bold; font-size: 11pt; }
-        .dot-red { color: #dc2626; font-weight: bold; font-size: 11pt; }
+        .dot-green {
+            color: #16a34a;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+
+        .dot-yellow {
+            color: #ca8a04;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+
+        .dot-red {
+            color: #dc2626;
+            font-weight: bold;
+            font-size: 11pt;
+        }
 
         .link-text {
             color: #0b57d0;
             text-decoration: underline;
             word-break: break-all;
         }
+
         .page-break {
             page-break-after: always;
         }
     </style>
 </head>
+
 <body>
 
     <h2 class="main-title">SOCIAL & MEDIA RISK MONITORING REPORT</h2>
@@ -79,7 +104,13 @@
     <div class="header-meta">
         <strong>Monitoring date:</strong> {{ \Carbon\Carbon::parse($date)->format('d F Y') }}<br>
         <strong>Geographical focus:</strong> Nepal, particularly Rasuwa, Nuwakot, Trishuli/Bhotekoshi corridor<br>
-        <strong>Monitoring subjects:</strong> Upper Trishuli-1 Hydropower Project; Upper Trishuli 1; Upper Trishuli-I; UT-1; UT-One; Upper Trisuli One; Rasuwagadhi Hydropower Project; Rasuwagadhi Hydropower; Rasuwa Bhotekhosi Hydropower Project; Rasuwa Bhotekoshi; Rasuwa Bhotekoshi Hydroelectric Project; Nepal; NWEDC; POWERCHINA; Power Construction Corporation of China; Debris flow; Mudslide; Mudflow; Chinese companies; Chinese enterprises; Chinese firms; SINOHYDRO; Sinohydro Corporation; Sinohydro Bureau 7; Sinohydro Bureau No. 7; Sinohydro Bureau Seven; Sinohydro Bureau 6; Sinohydro Bureau No. 6; Sinohydro Bureau Six; missing person; natural disaster; Nepal hydropower accident
+        <strong>Monitoring subjects:</strong> Upper Trishuli-1 Hydropower Project; Upper Trishuli 1; Upper Trishuli-I;
+        UT-1; UT-One; Upper Trisuli One; Rasuwagadhi Hydropower Project; Rasuwagadhi Hydropower; Rasuwa Bhotekhosi
+        Hydropower Project; Rasuwa Bhotekoshi; Rasuwa Bhotekoshi Hydroelectric Project; Nepal; NWEDC; POWERCHINA; Power
+        Construction Corporation of China; Debris flow; Mudslide; Mudflow; Chinese companies; Chinese enterprises;
+        Chinese firms; SINOHYDRO; Sinohydro Corporation; Sinohydro Bureau 7; Sinohydro Bureau No. 7; Sinohydro Bureau
+        Seven; Sinohydro Bureau 6; Sinohydro Bureau No. 6; Sinohydro Bureau Six; missing person; natural disaster; Nepal
+        hydropower accident
     </div>
 
     <div class="section-title" style="margin-top: 0;">Risk Classification:</div>
@@ -97,11 +128,13 @@
             </tr>
             <tr>
                 <td><span class="dot-yellow">●</span> YELLOW: Elevated</td>
-                <td>Rising negative comments, emotional family posts, unverified rumours, dissatisfaction or emerging accountability concerns.</td>
+                <td>Rising negative comments, emotional family posts, unverified rumours, dissatisfaction or emerging
+                    accountability concerns.</td>
             </tr>
             <tr>
                 <td><span class="dot-red">●</span> RED – Critical</td>
-                <td>Threats/organisation of protests, mainstream-media exposés, aggressive social-media mobilisation or coordinated corporate targeting.</td>
+                <td>Threats/organisation of protests, mainstream-media exposés, aggressive social-media mobilisation or
+                    coordinated corporate targeting.</td>
             </tr>
         </tbody>
     </table>
@@ -119,7 +152,7 @@
         <tr>
             <td style="font-weight: bold;">Overall Daily Risk Tier</td>
             <td>
-                @if(str_starts_with($highestRisk, 'RED'))
+                @if (str_starts_with($highestRisk, 'RED'))
                     <span class="dot-red">●</span> <strong>{{ $highestRisk }}</strong>
                 @elseif(str_starts_with($highestRisk, 'YELLOW'))
                     <span class="dot-yellow">●</span> <strong>{{ $highestRisk }}</strong>
@@ -131,13 +164,30 @@
         <tr>
             <td style="font-weight: bold;">Description</td>
             <td style="text-align: justify;">
-                Monitoring incorporates {{ $mentions->count() }} verified items identified in the monitoring stream and extends the review strictly through {{ $slotTime }} Nepal Time. Only material first published on {{ \Carbon\Carbon::parse($date)->format('d F Y') }} between 12:00 AM and {{ $slotTime }} NPT is included. The dominant themes are missing-person and relief operations, infrastructure resilience, and disaster updates. No newly verified coordinated protest, strike, work stoppage or corporate boycott targeting UT-1, NWEDC, POWERCHINA, or SINOHYDRO was identified in accessible open-source monitoring.
+                @if ($mentions->count() > 0)
+                    This monitoring cycle incorporates <strong>{{ $mentions->count() }} verified items</strong>
+                    identified across open-source channels, covering material
+                    {{ $timeWindowText ?? "first published up to {$slotTime} (NPT)" }}. Public discourse during this
+                    window primarily centered on humanitarian relief, missing-person verification, infrastructure
+                    reconstruction, and disaster response logistics. No verified calls for protests, labor strikes, site
+                    blockades, vandalism, or coordinated hostile targeting directed at <strong>Upper Trishuli-1
+                        (UT-1)</strong>, <strong>NWEDC</strong>, <strong>POWERCHINA</strong>, or
+                    <strong>SINOHYDRO</strong> were detected.
+                @else
+                    A comprehensive open-source sweep across digital media, local press, and social platforms identified
+                    <strong>0 verified mentions</strong>
+                    {{ $timeWindowText ?? "within the monitoring window ending at {$slotTime} (NPT)" }}. Project
+                    operations and contractor facilities remain stable, with no verified protests, labor unrest,
+                    physical blockades, or negative reputational campaigns targeting <strong>Upper Trishuli-1
+                        (UT-1)</strong>, <strong>NWEDC</strong>, <strong>POWERCHINA</strong>, or
+                    <strong>SINOHYDRO</strong>.
+                @endif
             </td>
         </tr>
     </table>
 
     <div class="section-title">2. Findings Recorded:</div>
-    @foreach($mentions as $index => $m)
+    @foreach ($mentions as $index => $m)
         <table class="bordered-table" style="margin-bottom: 14px;">
             <thead>
                 <tr>
@@ -154,7 +204,7 @@
                 <tr>
                     <td style="font-weight: bold;">Link</td>
                     <td>
-                        @if($m->url)
+                        @if ($m->url)
                             <a href="{{ $m->url }}" class="link-text">{{ $m->url }}</a>
                         @else
                             N/A
@@ -163,13 +213,15 @@
                 </tr>
                 <tr>
                     <td style="font-weight: bold;">Risk Interpretation</td>
-                    <td style="text-align: justify;">{{ $m->risk_reason ?: 'The coverage is humanitarian and recovery-focused; no direct allegation against UT-1, NWEDC, Doosan, POWERCHINA or SINOHYDRO was verified.' }}</td>
+                    <td style="text-align: justify;">
+                        {{ $m->risk_reason ?: 'The coverage is humanitarian and recovery-focused; no direct allegation against UT-1, NWEDC, Doosan, POWERCHINA or SINOHYDRO was verified.' }}
+                    </td>
                 </tr>
                 <tr>
                     <td style="font-weight: bold;">Risk Classification</td>
                     <td>
                         @php $tier = strtoupper($m->risk_tier ?? 'GREEN'); @endphp
-                        @if(str_contains($tier, 'RED'))
+                        @if (str_contains($tier, 'RED'))
                             <span class="dot-red">●</span> {{ $m->risk_tier }}
                         @elseif(str_contains($tier, 'YELLOW'))
                             <span class="dot-yellow">●</span> {{ $m->risk_tier }}
@@ -197,7 +249,8 @@
             <tr>
                 <td>Routine factual reporting</td>
                 <td>Active reporting on search, rescue, recovery, and flood reconstruction.</td>
-                <td style="text-align: center;"><span class="dot-green">●</span> / <span class="dot-yellow">●</span></td>
+                <td style="text-align: center;"><span class="dot-green">●</span> / <span class="dot-yellow">●</span>
+                </td>
             </tr>
             <tr>
                 <td>Humanitarian reporting</td>
@@ -227,10 +280,11 @@
             <tr style="font-weight: bold; background-color: #f8fafc;">
                 <td>Overall Daily Status</td>
                 <td>
-                    {{ $highestRisk }} — Normal to elevated humanitarian sensitivity; contractors on continued active watch.
+                    {{ $highestRisk }} — Normal to elevated humanitarian sensitivity; contractors on continued active
+                    watch.
                 </td>
                 <td style="text-align: center;">
-                    @if(str_starts_with($highestRisk, 'RED'))
+                    @if (str_starts_with($highestRisk, 'RED'))
                         <span class="dot-red">●</span>
                     @elseif(str_starts_with($highestRisk, 'YELLOW'))
                         <span class="dot-yellow">●</span>
@@ -243,4 +297,5 @@
     </table>
 
 </body>
+
 </html>

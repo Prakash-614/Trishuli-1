@@ -151,7 +151,9 @@ class SendDailyReport extends Command
             $pdfBinary,
             $totalCount,
             $highestRisk,
-            $attachmentFileName
+            $attachmentFileName,
+            $slotTime,
+            $timeWindowText
         ));
 
         $this->info("Success! [{$slot}] report sent with attachment '{$attachmentFileName}'.");

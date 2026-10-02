@@ -57,7 +57,7 @@ class ReportExportController extends Controller
         $date = $request->query('date');
         $data = $this->getReportData($date);
 
-        $pdf = Pdf::loadView('reports.daily-pdf', $data)
+        $pdf = Pdf::loadView('reports.monitoring-12pm', $data)
             ->setPaper('a4', 'portrait')
             ->setOptions([
                 'isHtml5ParserEnabled' => true,
@@ -88,7 +88,7 @@ class ReportExportController extends Controller
         $data = $this->getReportData($date);
 
         try {
-            $pdfBinary = Pdf::loadView('reports.daily-pdf', $data)
+           $pdfBinary = Pdf::loadView('reports.monitoring-12pm', $data)
                 ->setPaper('a4', 'portrait')
                 ->setOptions([
                     'isHtml5ParserEnabled' => true,
